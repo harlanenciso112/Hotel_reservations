@@ -1,0 +1,111 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: #f8f8f8;
+    color: #333;
+}
+
+header {
+    background-color: #2f2f2f;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #fff;
+}
+
+header .logo img {
+    width: 150px;
+}
+
+header nav ul {
+    list-style: none;
+    display: flex;
+}
+
+header nav ul li {
+    margin-left: 20px;
+}
+
+header nav ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+header nav ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Section Habitaciones */
+.habitaciones {
+    padding: 40px 20px;
+    background-color: #fff;
+}
+
+.habitaciones h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.habitaciones .fechas {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.habitaciones .habitaciones-lista {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.habitaciones .habitacion-card {
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.habitaciones .habitacion-card h2 {
+    font-size: 1.5rem;
+    color: #2f2f2f;
+    margin-bottom: 10px;
+}
+
+.habitaciones .habitacion-card .precio {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.habitaciones .habitacion-card .disponibilidad {
+    font-size: 1rem;
+    margin-bottom: 20px;
+}
+
+.habitaciones .habitacion-card .disponible {
+    color: green;
+}
+
+.habitaciones .habitacion-card .no-disponible {
+    color: red;
+}
+
+.habitaciones .habitacion-card .btn-reservar {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.habitaciones .habitacion-card .btn-reservar:hover {
+    background-color: #0056b3;
+}

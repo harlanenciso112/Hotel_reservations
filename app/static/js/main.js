@@ -29,28 +29,22 @@ document.getElementById("fecha-display").addEventListener("click", () => {
 });
 
 document.getElementById("btn-reservar").addEventListener("click", () => {
+    // Llamar a la función redirigirAReservas
+    redirigirAReservas();
+});
+
+function redirigirAReservas() {
     const fechas = flatpickrInstance.selectedDates;
+  
+    // Verificar si las fechas son válidas (se seleccionaron 2 fechas)
     if (fechas.length !== 2) {
         alert("Selecciona una fecha de entrada y salida.");
         return;
     }
-    const entrada = fechas[0].toISOString().split("T")[0];
-    const salida = fechas[1].toISOString().split("T")[0];
-    window.location.href = `habitaciones.html?entrada=${entrada}&salida=${salida}`;
-});
 
+    const entrada = fechas[0].toISOString().split("T")[0]; // Formato YYYY-MM-DD
+    const salida = fechas[1].toISOString().split("T")[0]; // Formato YYYY-MM-DD
 
-function redirigirAReservas() {
-    const fechaInicio = flatpickrInstance.selectedDates[0];
-    const fechaFin = flatpickrInstance.selectedDates[1];
-  
-    if (fechaInicio && fechaFin) {
-      const formatoFechaInicio = fechaInicio.toISOString().split('T')[0]; // Formato YYYY-MM-DD
-      const formatoFechaFin = fechaFin.toISOString().split('T')[0]; // Formato YYYY-MM-DD
-  
-      // Redirigir a la página de reservas con los parámetros de fechas
-      window.location.href = `/habitaciones?inicio=${formatoFechaInicio}&fin=${formatoFechaFin}`;
-    } else {
-      alert("Por favor, selecciona un rango de fechas.");
-    }
-  }
+    // Redirigir a la página de habitaciones con los parámetros de fechas
+    window.location.href = `/habitaciones?entrada=${entrada}&salida=${salida}`;
+}

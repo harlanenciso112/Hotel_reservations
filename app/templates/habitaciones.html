@@ -1,44 +1,59 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Habitaciones Disponibles</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Disponibilidad de Habitaciones - Bio Palma Hotel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesHabitaciones.css') }}">
 </head>
 <body>
-  <header>
-    <div class="logo">
-      <a href="index.html"><img src="img/logo.png" alt="Logo de Bio Palma Hotel" /></a>
-    </div>
-    <nav>
-      <ul>
-        <li><a href="#">🍽 Restaurante</a></li>
-        <li><a href="#">💼 Espacio coworking</a></li>
-        <li><a href="#">👤 Inicio de sesión o registro</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <section class="habitaciones">
-    <h2>Habitaciones Disponibles</h2>
-    {% if habitaciones %}
-      <div class="habitaciones-container">
-        {% for habitacion in habitaciones %}
-        <div class="habitacion">
-          <img src="{{ url_for('static', filename='img/habitacion_{{ habitacion.id }}.jpg') }}" alt="Habitación {{ habitacion.tipo }}" />
-          <h3>{{ habitacion.tipo }}</h3>
-          <p><strong>Precio por noche:</strong> ${{ habitacion.precio }}</p>
-          <p><strong>Disponibilidad:</strong> {% if habitacion.disponibilidad %} Disponible {% else %} No disponible {% endif %}</p>
-          <a href="/reservar/{{ habitacion.id }}" class="btn-reservar">Reservar ahora</a>
+    <!-- Encabezado -->
+    <header>
+        <div class="logo">
+            <a href="index.html"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Bio Palma Hotel" /></a>
         </div>
-        {% endfor %}
-      </div>
-    {% else %}
-      <p>No hay habitaciones disponibles para las fechas seleccionadas.</p>
-    {% endif %}
-  </section>
+        <nav>
+            <ul>
+                <li><a href="#">🍽 Restaurante</a></li>
+                <li><a href="#">💼 Espacio coworking</a></li>
+                <li><a href="#">👤 Inicio de sesión o registro</a></li>
+            </ul>
+        </nav>
+    </header>
 
-  <script src="js/main.js"></script>
+    <!-- Sección de habitaciones -->
+    <section class="habitaciones">
+        <div class="container">
+            <h1>Habitaciones Disponibles</h1>
+            <p>Selecciona la habitación que deseas reservar.</p>
+            <div class="fechas">
+                <p>Entrada: <strong>{{ entrada }}</strong></p>
+                <p>Salida: <strong>{{ salida }}</strong></p>
+            </div>
+
+            <!-- Lista de habitaciones -->
+            <div class="habitaciones-lista">
+                {% for habitacion in habitaciones %}
+                    <div class="habitacion-card">
+                        <h2>{{ habitacion.tipo }}</h2>
+                        <p class="precio">${{ habitacion.precio }} por noche</p>
+                        <p class="disponibilidad">
+                            {% if habitacion.disponibilidad %}
+                                <span class="disponible">Disponible</span>
+                            {% else %}
+                                <span class="no-disponible">No disponible</span>
+                            {% endif %}
+                        </p>
+                        {% if habitacion.disponibilidad %}
+                            <button class="btn-reservar">Reservar</button>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
+
