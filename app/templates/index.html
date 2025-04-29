@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bio Palma Hotel - Reservas</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <a href="index.html"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo de Bio Palma Hotel" /></a>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#">🍽 Restaurante</a></li>
+        <li><a href="#">💼 Espacio coworking</a></li>
+        <li><a href="#">👤 Inicio de sesión o registro</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero">
+
+
+
+    <div class="hero-overlay">
+      <div class="reserva-box" id="reserva-box">
+        <div id="fecha-display" class="fecha-display">
+          <span id="noches">📅 Selecciona Fechas</span><br>
+          <span id="rango-mostrado" class="rango-mostrado">Haz clic para elegir</span>
+        </div>
+        <input type="text" id="rango-fechas" placeholder="Selecciona fechas" />
+        <button id="btn-reservar">Reservar</button>
+      </div>
+
+      <div class="hero-content">
+        <h1>Sumérgete en un oasis de tranquilidad y naturaleza.</h1>
+        <p>BioPalma, donde el descanso se encuentra con la belleza del entorno y cada momento se convierte en una experiencia inolvidable.</p>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
