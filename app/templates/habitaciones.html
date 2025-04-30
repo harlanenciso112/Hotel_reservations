@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Disponibilidad de Habitaciones - Bio Palma Hotel</title>
+    <title>Habitaciones - Bio Palma Hotel</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesHabitaciones.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
     <!-- Encabezado -->
     <header>
         <div class="logo">
-            <a href="index.html"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Bio Palma Hotel" /></a>
+            <a href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Bio Palma Hotel" /></a>
         </div>
         <nav>
             <ul>
+                <li><a href="{{ url_for('main.home') }}">🏠 Inicio</a></li>
                 <li><a href="#">🍽 Restaurante</a></li>
                 <li><a href="#">💼 Espacio coworking</a></li>
                 <li><a href="#">👤 Inicio de sesión o registro</a></li>
@@ -24,6 +27,17 @@
     <!-- Sección de habitaciones -->
     <section class="habitaciones">
         <div class="container">
+            <!-- Selector de fechas -->
+            <div class="contenedor-del-reserva-box">
+                <div class="reserva-box" id="reserva-box">
+                    <div id="fecha-display" class="fecha-display">
+                        <span id="noches">📅 Selecciona Fechas</span>
+                        <span id="rango-mostrado" class="rango-mostrado">Haz clic para elegir</span>
+                    </div>
+                    <input type="text" id="rango-fechas" placeholder="Selecciona fechas" />
+                </div>
+            </div>
+            
             <h1>Habitaciones Disponibles</h1>
             <p>Selecciona la habitación que deseas reservar.</p>
             <div class="fechas">
@@ -53,7 +67,9 @@
         </div>
     </section>
 
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+    <script src="{{ url_for('static', filename='js/habitaciones.js') }}"></script>
 </body>
 </html>
-

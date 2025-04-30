@@ -6,17 +6,17 @@
   <title>Bio Palma Hotel - Reservas</title>
 
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
 </head>
 <body>
   <header>
     <div class="logo">
-      <a href="index.html"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo de Bio Palma Hotel" /></a>
+      <a href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo de Bio Palma Hotel" /></a>
     </div>
     <nav>
       <ul>
+        <li><a href="{{ url_for('main.home') }}">🏠 Inicio</a></li>
         <li><a href="#">🍽 Restaurante</a></li>
         <li><a href="#">💼 Espacio coworking</a></li>
         <li><a href="#">👤 Inicio de sesión o registro</a></li>

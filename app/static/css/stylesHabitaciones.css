@@ -8,20 +8,22 @@
 
 body {
     background-color: #f8f8f8;
-    color: #333;
+    color: #3783b2;
 }
 
 header {
-    background-color: #2f2f2f;
-    padding: 10px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: #fff;
-}
+    padding: 1rem 2rem;
+    background-color: white;
+  }
 
 header .logo img {
-    width: 150px;
+    height: 50px; /* Tamaño base */
+    transform: scale(1.5); /* Aumenta un 50% (1.5 = 150%) */
+    transform-origin: left; /* Escala desde la izquierda para evitar desplazamientos no deseados */
+    margin-left: 100px;
 }
 
 header nav ul {
@@ -34,7 +36,7 @@ header nav ul li {
 }
 
 header nav ul li a {
-    color: #fff;
+    color: #000000;
     text-decoration: none;
 }
 
@@ -42,10 +44,104 @@ header nav ul li a:hover {
     text-decoration: underline;
 }
 
+
+/* Box reservas*/
+
+.contenedor-del-reserva-box {
+    display: flex; /* Convierte el contenedor en un flex container */
+    justify-content: center; /* Centra horizontalmente los elementos hijos */
+    
+  }
+
+.reserva-box {
+    background: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: black;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+  
+.fecha-display {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9rem;
+    line-height: 1.3;
+    z-index: 5;
+}
+
+.flatpickr-calendar {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 9999;
+    margin-top: 20px;
+    
+}
+  
+
+/*position: absolute !important;
+    top: 100% !important; 
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 9999;
+    margin-top: 5px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); */
+
+.rango-mostrado {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+#rango-fechas {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    cursor: pointer;
+}
+
+
+#btn-reservar {
+    background-color: black;
+    color: white;
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+  
 /* Section Habitaciones */
 .habitaciones {
     padding: 40px 20px;
     background-color: #fff;
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background-image: url('../img/loby.png');
+    background-size: cover;
+    background-position: center;
+}
+
+.container {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 1200px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .habitaciones h1 {
@@ -74,13 +170,13 @@ header nav ul li a:hover {
 
 .habitaciones .habitacion-card h2 {
     font-size: 1.5rem;
-    color: #2f2f2f;
+    color: #003a5f;
     margin-bottom: 10px;
 }
 
 .habitaciones .habitacion-card .precio {
     font-size: 1.2rem;
-    color: #555;
+    color: #003a5f;
     margin-bottom: 10px;
 }
 
@@ -108,4 +204,30 @@ header nav ul li a:hover {
 
 .habitaciones .habitacion-card .btn-reservar:hover {
     background-color: #0056b3;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .habitaciones .habitaciones-lista {
+        grid-template-columns: repeat(1, 1fr);
+    }
+    
+    header {
+        flex-direction: column;
+        padding: 1rem;
+    }
+    
+    header .logo img {
+        margin-left: 0;
+        margin-bottom: 10px;
+    }
+    
+    header nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    header nav ul li {
+        margin: 5px;
+    }
 }
