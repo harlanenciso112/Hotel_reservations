@@ -63,3 +63,29 @@ document.getElementById("fecha-display").addEventListener("click", () => {
 document.getElementById("rango-fechas").addEventListener("click", () => {
     flatpickrInstance.open();
 });
+
+function limpiarFiltros() {
+    // Limpiar todos los checkboxes
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    
+    // Mantener los valores de entrada y salida
+    const entradaValue = document.querySelector('input[name="entrada"]').value;
+    const salidaValue = document.querySelector('input[name="salida"]').value;
+    
+    // Construir la URL con solo las fechas si están disponibles
+    let url = '/habitaciones';  // Use the direct path instead of Flask's url_for
+    
+    const params = new URLSearchParams();
+    if (entradaValue) params.append('entrada', entradaValue);
+    if (salidaValue) params.append('salida', salidaValue);
+    
+    if (params.toString()) {
+        url += '?' + params.toString();
+    }
+    
+    // Redirigir a la página sin filtros
+    window.location.href = url;
+}

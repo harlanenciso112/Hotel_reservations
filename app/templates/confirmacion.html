@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Reserva Confirmada! - Bio Palma Hotel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesReservas.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+    <style>
+        .confirmacion-container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .confirmacion-icon {
+            font-size: 80px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        
+        .confirmacion-container h1 {
+            color: #3783b2;
+            margin-bottom: 20px;
+        }
+        
+        .confirmacion-container p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .confirmacion-datos {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        .btn-inicio {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #3783b2;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-inicio:hover {
+            background-color: #2a6a8f;
+        }
+    </style>
+</head>
+<body>
+    <!-- Encabezado -->
+    <header>
+        <div class="logo">
+            <a href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Bio Palma Hotel" /></a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('main.home') }}">🏠 Inicio</a></li>
+                <li><a href="{{ url_for('main.mostrar_habitaciones') }}">🛌 Habitaciones</a></li>
+                <li><a href="#">🍽 Restaurante</a></li>
+                <li><a href="#">💼 Espacio coworking</a></li>
+                <li><a href="#">👤 Inicio de sesión o registro</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="confirmacion-container">
+        <div class="confirmacion-icon">✅</div>
+        <h1>¡Reserva Confirmada!</h1>
+        <p>¡Gracias por elegir Bio Palma Hotel para tu estancia!</p>
+        <p>Tu reserva ha sido procesada correctamente.</p>
+        
+        <div class="confirmacion-datos">
+            <p><strong>Número de reserva:</strong> #{{ reserva_id }}</p>
+            <p><strong>Nombre:</strong> {{ nombre }}</p>
+            <p><strong>Fecha de entrada:</strong> {{ entrada }}</p>
+            <p><strong>Fecha de salida:</strong> {{ salida }}</p>
+            <p>Hemos enviado un correo electrónico con los detalles de tu reserva.</p>
+        </div>
+        
+        <p>Esperamos que disfrutes de tu estancia con nosotros.</p>
+        <p>Ante cualquier consulta, no dudes en contactarnos.</p>
+        
+        <a href="{{ url_for('main.home') }}" class="btn-inicio">Volver al Inicio</a>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Bio Palma Hotel - Todos los derechos reservados</p>
+    </footer>
+</body>
+</html>

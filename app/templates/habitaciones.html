@@ -27,8 +27,8 @@
     <!-- Sección de habitaciones -->
     <section class="habitaciones">
         <div class="container">
-            <!-- Selector de fechas -->
-            <div class="contenedor-del-reserva-box">
+            <!-- Caja de reserva centralizada -->
+            <div class="reserva-container">
                 <div class="reserva-box" id="reserva-box">
                     <div id="fecha-display" class="fecha-display">
                         <span id="noches">📅 Selecciona Fechas</span>
@@ -38,31 +38,82 @@
                 </div>
             </div>
             
-            <h1>Habitaciones Disponibles</h1>
-            <p>Selecciona la habitación que deseas reservar.</p>
-            <div class="fechas">
-                <p>Entrada: <strong>{{ entrada }}</strong></p>
-                <p>Salida: <strong>{{ salida }}</strong></p>
-            </div>
-
-            <!-- Lista de habitaciones -->
-            <div class="habitaciones-lista">
-                {% for habitacion in habitaciones %}
-                    <div class="habitacion-card">
-                        <h2>{{ habitacion.tipo }}</h2>
-                        <p class="precio">${{ habitacion.precio }} por noche</p>
-                        <p class="disponibilidad">
-                            {% if habitacion.disponibilidad %}
-                                <span class="disponible">Disponible</span>
-                            {% else %}
-                                <span class="no-disponible">No disponible</span>
-                            {% endif %}
-                        </p>
-                        {% if habitacion.disponibilidad %}
-                            <button class="btn-reservar">Reservar</button>
-                        {% endif %}
-                    </div>
-                {% endfor %}
+            <div class="filtros-y-habitaciones">
+                <!-- Filtros -->
+                <div class="filtros">
+                    <h3>Filtrar por:</h3>
+                    <form method="get" action="{{ url_for('main.mostrar_habitaciones') }}" class="filtros-form" id="filtros-form">
+                        <input type="hidden" name="entrada" value="{{ entrada }}">
+                        <input type="hidden" name="salida" value="{{ salida }}">
+                        
+                        <label for="tipo">Tipo de habitación:</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="tipo" value="Estándar" {% if 'Estándar' in request.args.getlist('tipo') %}checked{% endif %}> Estándar</label>
+                            <label><input type="checkbox" name="tipo" value="Suite" {% if 'Suite' in request.args.getlist('tipo') %}checked{% endif %}> Suite</label>
+                            <label><input type="checkbox" name="tipo" value="Junior" {% if 'Junior' in request.args.getlist('tipo') %}checked{% endif %}> Junior</label>
+                        </div>
+                    
+                        <label for="camas">Cantidad de camas:</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="camas" value="1" {% if '1' in request.args.getlist('camas') %}checked{% endif %}> 1 cama</label>
+                            <label><input type="checkbox" name="camas" value="2" {% if '2' in request.args.getlist('camas') %}checked{% endif %}> 2 camas</label>
+                            <label><input type="checkbox" name="camas" value="3" {% if '3' in request.args.getlist('camas') %}checked{% endif %}> 3 camas</label>
+                        </div>
+                    
+                        <label for="precio">Rango de precio:</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="precio" value="100" {% if '100' in request.args.getlist('precio') %}checked{% endif %}> Menos de $100</label>
+                            <label><input type="checkbox" name="precio" value="200" {% if '200' in request.args.getlist('precio') %}checked{% endif %}> Menos de $200</label>
+                            <label><input type="checkbox" name="precio" value="300" {% if '300' in request.args.getlist('precio') %}checked{% endif %}> Menos de $300</label>
+                        </div>
+                        
+                        <button type="submit" class="btn-filtrar">Aplicar Filtros</button>
+                        <button type="button" class="btn-limpiar" onclick="limpiarFiltros()">Limpiar Filtros</button>
+                    </form>
+                </div>
+    
+                <!-- Lista de habitaciones -->
+                <div class="habitaciones-lista">
+                    {% if habitaciones %}
+                        {% for habitacion in habitaciones %}
+                            <div class="habitacion-card">
+                                <div class="habitacion-info">
+                                    <h2>{{ habitacion.tipo }}</h2>
+                                    <div class="detalles">
+                                        <p class="caracteristica"><span class="icono">💤</span> {{ habitacion.camas }} cama{% if habitacion.camas > 1 %}s{% endif %}</p>
+                                        <p class="caracteristica"><span class="icono">👥</span> Hasta {{ habitacion.camas * 2 }} personas</p>
+                                        <p class="caracteristica"><span class="icono">📏</span> {{ habitacion.metros }} m²</p>
+                                    </div>
+                                    <p class="precio">${{ habitacion.precio }} <span class="por-noche">por noche</span></p>
+                                    {% if habitacion.disponibilidad %}
+                                        <a href="{{ url_for('main.mostrar_reservas', 
+                                                id_habitacion=habitacion.id, 
+                                                tipo=habitacion.tipo, 
+                                                camas=habitacion.camas, 
+                                                precio=habitacion.precio, 
+                                                entrada=entrada, 
+                                                salida=salida) }}" 
+                                           class="btn-reservar">Reservar Ahora</a>
+                                    {% endif %}
+                                </div>
+                                <div class="habitacion-imagen">
+                                    {% if habitacion.tipo == 'Estandar' %}
+                                        <img src="{{ url_for('static', filename='img/estandar.jpg') }}" alt="Habitación Estándar">
+                                    {% elif habitacion.tipo == 'Suite' %}
+                                        <img src="{{ url_for('static', filename='img/suite.jpg') }}" alt="Habitación Suite">
+                                    {% elif habitacion.tipo == 'Junior' %}
+                                        <img src="{{ url_for('static', filename='img/junior.jpg') }}" alt="Habitación Junior">
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-resultados">
+                            <h3>No se encontraron habitaciones que coincidan con los filtros seleccionados.</h3>
+                            <button type="button" class="btn-limpiar" onclick="limpiarFiltros()">Limpiar Filtros</button>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </section>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar Reserva - Bio Palma Hotel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesReservas.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+    <style>
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        input:invalid {
+            border-color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <!-- Encabezado -->
+    <header>
+        <div class="logo">
+            <a href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Bio Palma Hotel" /></a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('main.home') }}">🏠 Inicio</a></li>
+                <li><a href="{{ url_for('main.mostrar_habitaciones') }}">🛌 Habitaciones</a></li>
+                <li><a href="#">🍽 Restaurante</a></li>
+                <li><a href="#">💼 Espacio coworking</a></li>
+                <li><a href="#">👤 Inicio de sesión o registro</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="reserva-container">
+        <div class="reserva-resumen">
+            <h1>Resumen de tu Reserva</h1>
+            
+            <div class="habitacion-detalle">
+                <div class="habitacion-imagen">
+                    {% if tipo == 'Estandar' %}
+                        <img src="{{ url_for('static', filename='img/estandar.jpg') }}" alt="Habitación Estándar">
+                    {% elif tipo == 'Suite' %}
+                        <img src="{{ url_for('static', filename='img/suite.jpg') }}" alt="Habitación Suite">
+                    {% elif tipo == 'Junior' %}
+                        <img src="{{ url_for('static', filename='img/junior.jpg') }}" alt="Habitación Junior">
+                    {% endif %}
+                </div>
+                
+                <div class="detalles-reserva">
+                    <h2>{{ tipo }}</h2>
+                    <p><strong>Camas:</strong> {{ camas }} (para {{ camas|int * 2 }} personas máximo)</p>
+                    <p><strong>Precio por noche:</strong> ${{ precio }}</p>
+                    <p><strong>Fechas:</strong> {{ entrada }} al {{ salida }}</p>
+                    
+                    {% if entrada and salida %}
+                        <p><strong>Total noches:</strong> {{ dias }}</p>
+                        <p class="precio-total"><strong>Total a pagar:</strong> ${{ precio|int * dias }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="formulario-reserva">
+            <h2>Completa tus datos</h2>
+            <form id="reserva-form" method="post" action="{{ url_for('main.procesar_reserva') }}">
+                <!-- Campos ocultos para datos de la reserva -->
+                <input type="hidden" name="id_habitacion" value="{{ id_habitacion }}">
+                <input type="hidden" name="entrada" value="{{ entrada }}">
+                <input type="hidden" name="salida" value="{{ salida }}">
+                <input type="hidden" name="precio_total" value="{{ precio|int * dias if entrada and salida else 0 }}">
+                
+                <div class="form-group">
+                    <label for="nombre">Nombre completo</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Correo electrónico</label>
+                    <input type="email" id="email" name="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="Ingresa un correo electrónico válido (ejemplo: usuario@dominio.com)">
+                    <span class="error-message" id="email-error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="telefono">Teléfono de contacto</label>
+                    <input type="tel" id="telefono" name="telefono" required pattern="[0-9]{10}" title="Ingresa un número telefónico de 10 dígitos sin espacios ni caracteres especiales">
+                    <span class="error-message" id="telefono-error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="documento">Documento de identidad</label>
+                    <input type="text" id="documento" name="documento" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="huespedes">Número de huéspedes</label>
+                    <select id="huespedes" name="huespedes" required>
+                        {% for i in range(1, (camas|int * 2) + 1) %}
+                            <option value="{{ i }}">{{ i }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="comentarios">Comentarios o peticiones especiales</label>
+                    <textarea id="comentarios" name="comentarios" rows="3"></textarea>
+                </div>
+                
+                <div class="pago-seccion">
+                    <h3>Método de pago</h3>
+                    <div class="metodos-pago">
+                        <div class="metodo">
+                            <input type="radio" id="tarjeta" name="metodo_pago" value="tarjeta" checked>
+                            <label for="tarjeta">Tarjeta de crédito/débito</label>
+                        </div>
+                        
+                        <div class="metodo">
+                            <input type="radio" id="paypal" name="metodo_pago" value="paypal">
+                            <label for="paypal">PayPal</label>
+                        </div>
+                    </div>
+                    
+                    <div class="tarjeta-detalles" id="tarjeta-detalles">
+                        <div class="form-group">
+                            <label for="numero_tarjeta">Número de tarjeta</label>
+                            <input type="text" id="numero_tarjeta" name="numero_tarjeta" pattern="[0-9]{16}" placeholder="1234 5678 9012 3456">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group medio">
+                                <label for="fecha_exp">Fecha de expiración</label>
+                                <input type="text" id="fecha_exp" name="fecha_exp" placeholder="MM/AA">
+                            </div>
+                            
+                            <div class="form-group medio">
+                                <label for="cvv">CVV</label>
+                                <input type="text" id="cvv" name="cvv" pattern="[0-9]{3,4}" placeholder="123">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="terminos-group">
+                    <input type="checkbox" id="terminos" name="terminos" required>
+                    <label for="terminos">Acepto los términos y condiciones del hotel</label>
+                </div>
+                
+                <button type="submit" class="btn-pagar">Confirmar y Pagar</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Bio Palma Hotel - Todos los derechos reservados</p>
+    </footer>
+
+    <script>
+        // Mostrar/ocultar datos de tarjeta según método de pago seleccionado
+        document.querySelectorAll('input[name="metodo_pago"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const tarjetaDetalles = document.getElementById('tarjeta-detalles');
+                if (this.value === 'tarjeta') {
+                    tarjetaDetalles.style.display = 'block';
+                } else {
+                    tarjetaDetalles.style.display = 'none';
+                }
+            });
+        });
+
+        // Validación de formulario mejorada
+        document.getElementById('reserva-form').addEventListener('submit', function(event) {
+            let isValid = true;
+            
+            // Validar email
+            const emailInput = document.getElementById('email');
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            const emailError = document.getElementById('email-error');
+            
+            if (!emailRegex.test(emailInput.value)) {
+                emailError.textContent = "Por favor, introduce un correo electrónico válido";
+                emailError.style.display = "block";
+                isValid = false;
+            } else {
+                emailError.style.display = "none";
+            }
+            
+            // Validar teléfono
+            const telefonoInput = document.getElementById('telefono');
+            const telefonoRegex = /^[0-9]{10}$/;
+            const telefonoError = document.getElementById('telefono-error');
+            
+            if (!telefonoRegex.test(telefonoInput.value)) {
+                telefonoError.textContent = "Por favor, introduce un número de teléfono de 10 dígitos";
+                telefonoError.style.display = "block";
+                isValid = false;
+            } else {
+                telefonoError.style.display = "none";
+            }
+            
+            // Si hay errores, prevenir el envío del formulario
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

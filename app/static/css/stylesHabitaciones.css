@@ -17,12 +17,13 @@ header {
     align-items: center;
     padding: 1rem 2rem;
     background-color: white;
-  }
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
 header .logo img {
-    height: 50px; /* Tamaño base */
-    transform: scale(1.5); /* Aumenta un 50% (1.5 = 150%) */
-    transform-origin: left; /* Escala desde la izquierda para evitar desplazamientos no deseados */
+    height: 50px;
+    transform: scale(1.5);
+    transform-origin: left;
     margin-left: 100px;
 }
 
@@ -38,34 +39,43 @@ header nav ul li {
 header nav ul li a {
     color: #000000;
     text-decoration: none;
+    transition: color 0.3s ease;
 }
 
 header nav ul li a:hover {
-    text-decoration: underline;
+    color: #3783b2;
+    text-decoration: none;
 }
 
-
-/* Box reservas*/
-
-.contenedor-del-reserva-box {
-    display: flex; /* Convierte el contenedor en un flex container */
-    justify-content: center; /* Centra horizontalmente los elementos hijos */
-    
-  }
+/* Box reservas */
+.reserva-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 30px;
+}
 
 .reserva-box {
     background: white;
-    padding: 10px 20px;
-    border-radius: 8px;
+    padding: 15px 25px;
+    border-radius: 12px;
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
     color: black;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     position: relative;
+    max-width: 350px;
+    width: 100%;
+    justify-content: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-  
+
+.reserva-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
 .fecha-display {
     cursor: pointer;
     display: flex;
@@ -80,18 +90,8 @@ header nav ul li a:hover {
     transform: translateX(-50%) !important;
     z-index: 9999;
     margin-top: 20px;
-    
 }
   
-
-/*position: absolute !important;
-    top: 100% !important; 
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    z-index: 9999;
-    margin-top: 5px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); */
-
 .rango-mostrado {
     font-weight: bold;
     font-size: 1rem;
@@ -105,19 +105,22 @@ header nav ul li a:hover {
     cursor: pointer;
 }
 
-
 #btn-reservar {
-    background-color: black;
+    background-color: #3783b2;
     color: white;
-    padding: 0.6rem 1rem;
+    padding: 0.6rem 1.2rem;
     border: none;
     border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
     font-size: 0.95rem;
+    transition: background-color 0.3s ease;
 }
 
-  
+#btn-reservar:hover {
+    background-color: #2a6a8f;
+}
+
 /* Section Habitaciones */
 .habitaciones {
     padding: 40px 20px;
@@ -136,82 +139,263 @@ header nav ul li a:hover {
 }
 
 .container {
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 255, 0.95);
     padding: 30px;
-    border-radius: 10px;
+    border-radius: 15px;
     width: 90%;
     max-width: 1200px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
-.habitaciones h1 {
+/* Contenedor principal para los filtros y habitaciones */
+.filtros-y-habitaciones {
+    display: flex;
+    gap: 30px;
+}
+
+/* Estilo para el contenedor de filtros */
+.filtros {
+    flex: 0 0 250px; /* Ancho fijo para los filtros */
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+}
+
+.filtros h3 {
+    margin-bottom: 15px;
+    color: #003a5f;
+    font-size: 1.2rem;
     text-align: center;
-    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
 }
 
-.habitaciones .fechas {
-    text-align: center;
-    margin-bottom: 30px;
+.filtros label {
+    display: block;
+    margin: 15px 0 5px;
+    font-weight: 600;
+    color: #003a5f;
 }
 
-.habitaciones .habitaciones-lista {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+/* Estilo para la lista de habitaciones */
+.habitaciones-lista {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     gap: 20px;
 }
 
-.habitaciones .habitacion-card {
-    background-color: #f5f5f5;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
+/* Estilo para las tarjetas de las habitaciones */
+.habitacion-card {
+    display: flex;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.habitaciones .habitacion-card h2 {
-    font-size: 1.5rem;
+.habitacion-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+}
+
+.habitacion-info {
+    flex: 1;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.habitacion-imagen {
+    flex: 1;
+    max-width: 40%;
+    overflow: hidden;
+    position: relative;
+    border-radius: 0 12px 12px 0;
+}
+
+.habitacion-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    display: block;
+}
+
+.habitacion-imagen::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(0,0,0,0.1), rgba(0,0,0,0));
+    pointer-events: none;
+}
+
+.habitacion-imagen img:hover {
+    transform: scale(1.05);
+}
+
+.habitacion-card h2 {
+    font-size: 1.6rem;
     color: #003a5f;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
-.habitaciones .habitacion-card .precio {
-    font-size: 1.2rem;
-    color: #003a5f;
-    margin-bottom: 10px;
-}
-
-.habitaciones .habitacion-card .disponibilidad {
-    font-size: 1rem;
+.detalles {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     margin-bottom: 20px;
 }
 
-.habitaciones .habitacion-card .disponible {
-    color: green;
+.caracteristica {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    color: #555;
 }
 
-.habitaciones .habitacion-card .no-disponible {
-    color: red;
+.icono {
+    margin-right: 10px;
+    font-size: 1.1rem;
 }
 
-.habitaciones .habitacion-card .btn-reservar {
-    padding: 10px 20px;
-    background-color: #007bff;
+.habitacion-card .precio {
+    font-size: 1.5rem;
+    color: #3783b2;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.por-noche {
+    font-size: 0.9rem;
+    font-weight: normal;
+    color: #777;
+}
+
+.btn-reservar {
+    padding: 12px 25px;
+    background-color: #3783b2;
     color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    align-self: flex-start;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.btn-reservar:hover {
+    background-color: #2a6a8f;
+}
+
+.btn-filtrar {
+    padding: 10px 15px;
+    background-color: #3783b2;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 20px;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.btn-filtrar:hover {
+    background-color: #2a6a8f;
+}
+
+/* Estilos para el botón limpiar filtros */
+.btn-limpiar {
+    padding: 10px 15px;
+    background-color: #5a5a5a;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 10px;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.btn-limpiar:hover {
+    background-color: #444444;
+}
+
+/* Estilos para mensaje de no resultados */
+.no-resultados {
+    background-color: #f9f9f9;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+}
+
+.no-resultados h3 {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Estilo para los grupos de checkboxes */
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+/* Estilo para los checkboxes dentro del grupo */
+.checkbox-group label {
+    font-size: 0.9rem;
+    color: #555;
+    font-weight: normal;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
+
+/* Estilo de los checkboxes */
+.checkbox-group input[type="checkbox"] {
+    margin-right: 10px;
     cursor: pointer;
 }
 
-.habitaciones .habitacion-card .btn-reservar:hover {
-    background-color: #0056b3;
-}
-
-/* Responsive styles */
-@media (max-width: 768px) {
-    .habitaciones .habitaciones-lista {
-        grid-template-columns: repeat(1, 1fr);
+/* Estilo responsive para pantallas medianas */
+@media (max-width: 992px) {
+    .habitacion-card {
+        flex-direction: column;
     }
     
+    .habitacion-imagen {
+        max-width: 100%;
+        height: 200px;
+    }
+}
+
+/* Estilo responsive para pantallas pequeñas */
+@media (max-width: 768px) {
+    .filtros-y-habitaciones {
+        flex-direction: column;
+    }
+    
+    .filtros {
+        flex: none;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    
+    /* Cambiar la disposición del header para pantallas pequeñas */
     header {
         flex-direction: column;
         padding: 1rem;
@@ -229,5 +413,9 @@ header nav ul li a:hover {
     
     header nav ul li {
         margin: 5px;
+    }
+    
+    .container {
+        padding: 20px 15px;
     }
 }
