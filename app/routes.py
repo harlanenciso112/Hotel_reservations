@@ -19,7 +19,7 @@ def mostrar_habitaciones():
     precios = request.args.getlist('precio')
     
     conn = obtener_conexion()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     
     # Construir la consulta base - solo habitaciones disponibles
     query = "SELECT * FROM habitaciones WHERE disponibilidad = True"
