@@ -117,7 +117,8 @@ def procesar_reserva():
             
             # Obtener el ID del cliente (ya sea el recién insertado o el existente)
             cursor.execute("SELECT id FROM clientes WHERE documento = %s", (documento,))
-            cliente_id = cursor.fetchone()[0]
+            resultado = cursor.fetchone()
+            cliente_id = resultado['id']  # Accede al valor por nombre de columna
             
             # 2. Crear la reserva
             fecha_reserva = datetime.now().strftime('%Y-%m-%d')

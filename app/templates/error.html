@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - Bio Palma Hotel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesReservas.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+    <style>
+        .error-container {
+            max-width: 800px;
+            margin: 100px auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .error-icon {
+            font-size: 70px;
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+        
+        .error-message {
+            background-color: #f8f8f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+            font-family: monospace;
+            overflow-x: auto;
+        }
+        
+        .btn-volver {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #3783b2;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+        
+        .btn-volver:hover {
+            background-color: #2a6a8f;
+        }
+    </style>
+</head>
+<body>
+    <!-- Encabezado -->
+    <header>
+        <div class="logo">
+            <a href="{{ url_for('main.home') }}"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo Bio Palma Hotel" /></a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('main.home') }}">🏠 Inicio</a></li>
+                <li><a href="{{ url_for('main.mostrar_habitaciones') }}">🛌 Habitaciones</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="error-container">
+        <div class="error-icon">❌</div>
+        <h1>Ha ocurrido un error</h1>
+        <p>Lo sentimos, no pudimos procesar tu solicitud debido a un error.</p>
+        
+        <div class="error-message">
+            <p>{{ error }}</p>
+        </div>
+        
+        <p>Por favor, intenta nuevamente o contacta con nuestro servicio de atención al cliente.</p>
+        
+        <a href="{{ url_for('main.home') }}" class="btn-volver">Volver al Inicio</a>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Bio Palma Hotel - Todos los derechos reservados</p>
+    </footer>
+</body>
+</html>
