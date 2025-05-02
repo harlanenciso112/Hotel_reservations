@@ -1,28 +1,28 @@
 LICENCIA DE USO NO COMERCIAL v1.0
 
-Copyright (c) 2025 [Tu Nombre o Razón Social]
+Copyright (c) 2025 Harlan Enciso
 Todos los derechos reservados.
 
 1. DEFINICIONES  
-   “Obra” se refiere al código fuente, binarios y documentación incluidos en este repositorio.  
+   “Obra” se refiere al código fuente, archivos ejecutables y documentación incluidos en este repositorio.  
    “Licenciatario” es cualquier persona o entidad que reciba copia de la Obra.
 
 2. CONCESIÓN DE LICENCIA  
-   El Titular otorga al Licenciatario un derecho no exclusivo, intransferible y gratuito para:
+   El Titular otorga al Licenciatario un derecho no exclusivo, intransferible y gratuito para:  
    a) Usar, ejecutar, estudiar y modificar la Obra.  
    b) Distribuir copias de la Obra **únicamente** con fines **no comerciales**.
 
 3. RESTRICCIONES  
-   Queda expresamente prohibido:
+   Queda expresamente prohibido:  
    a) Cualquier uso de la Obra con ánimo de lucro, venta, prestación de servicios comerciales o integración en productos de pago.  
    b) La sublicencia o transferencia de derechos de explotación comercial sin autorización escrita del Titular.
 
 4. PROTECCIÓN LEGAL Y SANCIONES  
-   El Licenciatario reconoce que la Obra está protegida por la Ley 23 de 1982 sobre derechos de autor y sus modificaciones, y por la Ley 603 de 2000 sobre licenciamiento de software en Colombia :contentReference[oaicite:3]{index=3}.  
-   El incumplimiento de esta licencia faculta al Titular a ejercer acciones civiles y penales ante los Juzgados de Bogotá D.C., conforme a lo previsto en los artículos 3, 87 y concordantes de la Ley 23 de 1982.
+   El Licenciatario reconoce que la Obra está protegida por la Ley 23 de 1982 sobre derechos de autor y la Ley 603 de 2000 sobre licenciamiento de software en Colombia.  
+   El incumplimiento de esta licencia faculta al Titular a ejercer acciones civiles y penales ante los Juzgados de Bogotá D.C., conforme a lo previsto en la normativa vigente.
 
 5. TERMINACIÓN  
-   Esta licencia se rescinde automáticamente si el Licenciatario viola alguna de las cláusulas 2 o 3. Tras la terminación, cesan todos los derechos concedidos y el Licenciatario deberá destruir todas las copias de la Obra.
+   Esta licencia se extinguirá automáticamente si el Licenciatario viola alguna de las cláusulas 2 o 3. Tras la terminación, cesan todos los derechos concedidos y el Licenciatario deberá destruir todas las copias de la Obra.
 
 6. JURISDICCIÓN Y LEY APLICABLE  
    Esta licencia se rige por las leyes de la República de Colombia. Cualquier disputa derivada de su interpretación o cumplimiento será sometida a los Juzgados y Tribunales de Bogotá D.C.
