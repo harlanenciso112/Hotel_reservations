@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request
 from datetime import datetime
 from .db import obtener_conexion
 
@@ -85,7 +85,7 @@ def mostrar_reservas():
                           precio=precio,
                           entrada=entrada, 
                           salida=salida,
-                          dias=dias)  # Pasamos los días calculados a la plantilla
+                          dias=dias)
 
 @main.route('/procesar_reserva', methods=['POST'])
 def procesar_reserva():
