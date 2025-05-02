@@ -17,9 +17,8 @@
         <nav>
             <ul>
                 <li><a href="{{ url_for('main.home') }}">🏠 Inicio</a></li>
-                <li><a href="#">🍽 Restaurante</a></li>
-                <li><a href="#">💼 Espacio coworking</a></li>
-                <li><a href="#">👤 Inicio de sesión o registro</a></li>
+                <li><a href="{{ url_for('main.mostrar_habitaciones') }}">🛌 Habitaciones</a></li>
+                <li><a href="#">💼 Cancelar Reserva</a></li>
             </ul>
         </nav>
     </header>
@@ -43,8 +42,11 @@
                 <div class="filtros">
                     <h3>Filtrar por:</h3>
                     <form method="get" action="{{ url_for('main.mostrar_habitaciones') }}" class="filtros-form" id="filtros-form">
-                        <input type="hidden" name="entrada" value="{{ entrada }}">
-                        <input type="hidden" name="salida" value="{{ salida }}">
+                        <div class="fecha-filtro">
+                            <input type="text" id="rango-fechas" style="display: none;">
+                            <input type="hidden" name="entrada" id="fecha-entrada" value="{{ entrada }}">
+                            <input type="hidden" name="salida" id="fecha-salida" value="{{ salida }}">
+                        </div>
                         
                         <label for="tipo">Tipo de habitación:</label>
                         <div class="checkbox-group">
