@@ -1,48 +1,44 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¡Reserva Confirmada! - Bio Palma Hotel</title>
+    <title>Error - Bio Palma Hotel</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesReservas.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
     <style>
-        .confirmacion-container {
+        .error-container {
             max-width: 800px;
-            margin: 50px auto;
+            margin: 100px auto;
             background-color: white;
             padding: 40px;
             border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             text-align: center;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         }
         
-        .confirmacion-icon {
-            font-size: 80px;
-            color: #4CAF50;
+        .error-icon {
+            font-size: 70px;
+            color: #e74c3c;
             margin-bottom: 20px;
         }
         
-        .confirmacion-container h1 {
-            color: #3783b2;
+        h1 {
+            color: #e74c3c;
             margin-bottom: 20px;
         }
         
-        .confirmacion-container p {
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-        
-        .confirmacion-datos {
-            background-color: #f9f9f9;
+        .error-message {
+            background-color: #f8f8f8;
+            padding: 15px;
             border-radius: 8px;
-            padding: 20px;
-            margin: 30px 0;
+            margin: 20px 0;
             text-align: left;
+            font-family: monospace;
+            overflow-x: auto;
         }
         
-        .btn-inicio {
+        .btn-volver {
             display: inline-block;
             padding: 12px 25px;
             background-color: #3783b2;
@@ -51,10 +47,9 @@
             border-radius: 8px;
             font-weight: 600;
             margin-top: 20px;
-            transition: background-color 0.3s;
         }
         
-        .btn-inicio:hover {
+        .btn-volver:hover {
             background-color: #2a6a8f;
         }
     </style>
@@ -74,24 +69,18 @@
         </nav>
     </header>
 
-    <div class="confirmacion-container">
-        <div class="confirmacion-icon">✅</div>
-        <h1>¡Reserva Confirmada!</h1>
-        <p>¡Gracias por elegir Bio Palma Hotel para tu estancia!</p>
-        <p>Tu reserva ha sido procesada correctamente.</p>
+    <div class="error-container">
+        <div class="error-icon">❌</div>
+        <h1>Ha ocurrido un error</h1>
+        <p>Lo sentimos, no pudimos procesar tu solicitud debido a un error.</p>
         
-        <div class="confirmacion-datos">
-            <p><strong>Número de reserva:</strong> #{{ reserva_id }}</p>
-            <p><strong>Nombre:</strong> {{ nombre }}</p>
-            <p><strong>Fecha de entrada:</strong> {{ entrada }}</p>
-            <p><strong>Fecha de salida:</strong> {{ salida }}</p>
-            <p>Hemos enviado un correo electrónico con los detalles de tu reserva.</p>
+        <div class="error-message">
+            <p>{{ error }}</p>
         </div>
         
-        <p>Esperamos que disfrutes de tu estancia con nosotros.</p>
-        <p>Ante cualquier consulta, no dudes en contactarnos.</p>
+        <p>Por favor, intenta nuevamente o contacta con nuestro servicio de atención al cliente.</p>
         
-        <a href="{{ url_for('main.home') }}" class="btn-inicio">Volver al Inicio</a>
+        <a href="{{ url_for('main.home') }}" class="btn-volver">Volver al Inicio</a>
     </div>
 
     <footer>

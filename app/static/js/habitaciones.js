@@ -1,69 +1,117 @@
 // Initialize flatpickr with Spanish locale
 flatpickr.localize(flatpickr.l10ns.es);
 
-// Function to get URL parameters
-function getUrlParams() {
-    const urlParams = new URLSearchParams(window.location.search);
-    return {
-        entrada: urlParams.get('entrada'),
-        salida: urlParams.get('salida')
-    };
-}
+document.addEventListener('DOMContentLoaded', function() {
+    // Obtener los elementos del DOM
+    const fechaEntradaEl = document.getElementById('fecha-entrada');
+    const fechaSalidaEl = document.getElementById('fecha-salida');
+    const rangoFechasEl = document.getElementById('rango-fechas');
+    const fechaDisplayEl = document.getElementById('fecha-display');
+    const rangoMostradoEl = document.getElementById('rango-mostrado');
+    
+    // Verificar si los elementos existen en el DOM
+    if (!rangoFechasEl) {
+        console.error('Elemento #rango-fechas no encontrado');
+        return;
+    }
+    
+    // Obtener valores iniciales de fechas
+    const entradaValue = fechaEntradaEl ? fechaEntradaEl.value : null;
+    const salidaValue = fechaSalidaEl ? fechaSalidaEl.value : null;
 
-// Get dates from URL if available
-const { entrada, salida } = getUrlParams();
-const defaultDates = [];
+    let defaultDates = [];
+    if (entradaValue && salidaValue) {
+        defaultDates = [entradaValue, salidaValue];
+    }
 
-if (entrada) defaultDates.push(entrada);
-if (salida) defaultDates.push(salida);
-
-// Initialize flatpickr with configuration
-const flatpickrInstance = flatpickr("#rango-fechas", {
-    mode: "range",
-    dateFormat: "Y-m-d",
-    minDate: "today",
-    locale: "es",
-    defaultDate: defaultDates.length > 0 ? defaultDates : undefined,
-    onChange: function (selectedDates) {
-        updateDateDisplay(selectedDates);
-    },
-    onReady: function(selectedDates) {
-        // Update display on initialization if dates are available
-        if (selectedDates.length > 0) {
-            updateDateDisplay(selectedDates);
+    // Formatear fechas existentes al cargar la página
+    if (entradaValue && salidaValue && rangoMostradoEl) {
+        try {
+            // Forzar la interpretación en la zona horaria local añadiendo 'T12:00:00'
+            const entradaDate = new Date(`${entradaValue}T12:00:00`);
+            const salidaDate = new Date(`${salidaValue}T12:00:00`);
+            
+            // Verificar que las fechas son válidas
+            if (!isNaN(entradaDate.getTime()) && !isNaN(salidaDate.getTime())) {
+                const entradaFormateada = entradaDate.toLocaleDateString('es-ES', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+                const salidaFormateada = salidaDate.toLocaleDateString('es-ES', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+                
+                rangoMostradoEl.textContent = `${entradaFormateada} - ${salidaFormateada}`;
+            }
+        } catch (e) {
+            console.error("Error al formatear fechas:", e);
         }
     }
-});
 
-// Function to update the date display
-function updateDateDisplay(selectedDates) {
-    const [entrada, salida] = selectedDates;
-    const nochesEl = document.getElementById("noches");
-    const rangoEl = document.getElementById("rango-mostrado");
-
-    if (entrada && salida) {
-        const options = { weekday: "short", day: "2-digit", month: "short" };
-        const entradaStr = entrada.toLocaleDateString("es-ES", options);
-        const salidaStr = salida.toLocaleDateString("es-ES", options);
-        const noches = Math.ceil((salida - entrada) / (1000 * 60 * 60 * 24));
-        nochesEl.textContent = `📅 ${noches} noche${noches > 1 ? 's' : ''}`;
-        rangoEl.textContent = `${entradaStr} - ${salidaStr}`;
-    } else {
-        nochesEl.textContent = "📅 Selecciona fechas";
-        rangoEl.textContent = "Haz clic para elegir";
+    // Inicializar flatpickr
+    const flatpickrInstance = flatpickr(rangoFechasEl, {
+        mode: "range",
+        minDate: "today",
+        dateFormat: "Y-m-d",
+        locale: "es",
+        defaultDate: defaultDates,
+        onChange: function(selectedDates, dateStr) {
+            if (selectedDates.length === 2) {
+                // Actualizar los campos ocultos con las nuevas fechas
+                if (fechaEntradaEl) fechaEntradaEl.value = flatpickr.formatDate(selectedDates[0], "Y-m-d");
+                if (fechaSalidaEl) fechaSalidaEl.value = flatpickr.formatDate(selectedDates[1], "Y-m-d");
+                
+                // Actualizar el texto mostrado
+                if (rangoMostradoEl) {
+                    // Usando el mismo truco para forzar la zona horaria correcta
+                    const entradaDate = new Date(flatpickr.formatDate(selectedDates[0], "Y-m-d") + "T12:00:00");
+                    const salidaDate = new Date(flatpickr.formatDate(selectedDates[1], "Y-m-d") + "T12:00:00");
+                    
+                    const entradaFormateada = entradaDate.toLocaleDateString('es-ES', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                    });
+                    const salidaFormateada = salidaDate.toLocaleDateString('es-ES', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                    });
+                    
+                    rangoMostradoEl.textContent = `${entradaFormateada} - ${salidaFormateada}`;
+                }
+                
+                // Calcular número de noches
+                const noches = Math.ceil((selectedDates[1] - selectedDates[0]) / (1000 * 60 * 60 * 24));
+                const nochesEl = document.getElementById("noches");
+                if (nochesEl) {
+                    nochesEl.textContent = `📅 ${noches} noche${noches > 1 ? 's' : ''}`;
+                }
+                
+                // Enviar el formulario automáticamente cuando se seleccionan ambas fechas
+                const form = document.getElementById('filtros-form');
+                if (form) form.submit();
+            }
+        }
+    });
+    
+    // Hacer que el selector de fechas se abra al hacer clic en el display
+    if (fechaDisplayEl) {
+        fechaDisplayEl.addEventListener("click", () => {
+            flatpickrInstance.open();
+        });
     }
-}
-
-// Make the calendar open when clicking on the display box
-document.getElementById("fecha-display").addEventListener("click", () => {
-    flatpickrInstance.open();
+    
+    // También hacer que se abra cuando se hace clic en el input
+    rangoFechasEl.addEventListener("click", () => {
+        flatpickrInstance.open();
+    });
 });
 
-// Also make it open when clicking on the input
-document.getElementById("rango-fechas").addEventListener("click", () => {
-    flatpickrInstance.open();
-});
-
+// Función para limpiar filtros
 function limpiarFiltros() {
     // Limpiar todos los checkboxes
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -71,12 +119,15 @@ function limpiarFiltros() {
         checkbox.checked = false;
     });
     
-    // Mantener los valores de entrada y salida
-    const entradaValue = document.querySelector('input[name="entrada"]').value;
-    const salidaValue = document.querySelector('input[name="salida"]').value;
+    // Obtener los valores actuales de entrada y salida
+    const fechaEntradaEl = document.getElementById('fecha-entrada');
+    const fechaSalidaEl = document.getElementById('fecha-salida');
     
-    // Construir la URL con solo las fechas si están disponibles
-    let url = '/habitaciones';  // Use the direct path instead of Flask's url_for
+    const entradaValue = fechaEntradaEl ? fechaEntradaEl.value : null;
+    const salidaValue = fechaSalidaEl ? fechaSalidaEl.value : null;
+    
+    // Construir la URL con solo las fechas más recientes
+    let url = '/habitaciones';
     
     const params = new URLSearchParams();
     if (entradaValue) params.append('entrada', entradaValue);
@@ -86,6 +137,6 @@ function limpiarFiltros() {
         url += '?' + params.toString();
     }
     
-    // Redirigir a la página sin filtros
+    // Redirigir a la página con las fechas actualizadas
     window.location.href = url;
 }

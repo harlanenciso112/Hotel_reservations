@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request
 from datetime import datetime
 from .db import obtener_conexion
 
@@ -19,7 +19,7 @@ def mostrar_habitaciones():
     precios = request.args.getlist('precio')
     
     conn = obtener_conexion()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     
     # Construir la consulta base - solo habitaciones disponibles
     query = "SELECT * FROM habitaciones WHERE disponibilidad = True"
@@ -85,7 +85,7 @@ def mostrar_reservas():
                           precio=precio,
                           entrada=entrada, 
                           salida=salida,
-                          dias=dias)  # Pasamos los días calculados a la plantilla
+                          dias=dias)
 
 @main.route('/procesar_reserva', methods=['POST'])
 def procesar_reserva():
@@ -117,7 +117,8 @@ def procesar_reserva():
             
             # Obtener el ID del cliente (ya sea el recién insertado o el existente)
             cursor.execute("SELECT id FROM clientes WHERE documento = %s", (documento,))
-            cliente_id = cursor.fetchone()[0]
+            resultado = cursor.fetchone()
+            cliente_id = resultado['id']  # Accede al valor por nombre de columna
             
             # 2. Crear la reserva
             fecha_reserva = datetime.now().strftime('%Y-%m-%d')
