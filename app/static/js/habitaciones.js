@@ -140,3 +140,32 @@ function limpiarFiltros() {
     // Redirigir a la página con las fechas actualizadas
     window.location.href = url;
 }
+
+// Función para validar fechas antes de reservar
+function validarFechasYReservar(url) {
+    const fechaEntrada = document.getElementById('fecha-entrada');
+    const fechaSalida = document.getElementById('fecha-salida');
+    
+    if (!fechaEntrada || !fechaSalida || !fechaEntrada.value || !fechaSalida.value) {
+        alert('Por favor, selecciona las fechas de entrada y salida antes de realizar la reserva.');
+        // Abrir el selector de fechas
+        const flatpickrInstance = document.querySelector('#rango-fechas')._flatpickr;
+        if (flatpickrInstance) {
+            flatpickrInstance.open();
+        }
+        return false;
+    }
+
+    // Verificar que las fechas sean válidas
+    const entrada = new Date(fechaEntrada.value);
+    const salida = new Date(fechaSalida.value);
+    
+    if (isNaN(entrada.getTime()) || isNaN(salida.getTime())) {
+        alert('Selecciona una fecha de entrada y salida.');
+        return false;
+    }
+
+    
+    window.location.href = url;
+    return false; // Prevenir el comportamiento por defecto del enlace
+}

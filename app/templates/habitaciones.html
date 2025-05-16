@@ -88,13 +88,9 @@
                                     </div>
                                     <p class="precio">${{ habitacion.precio }} <span class="por-noche">por noche</span></p>
                                     {% if habitacion.disponibilidad %}
-                                        <a href="{{ url_for('main.mostrar_reservas', 
-                                                id_habitacion=habitacion.id, 
-                                                tipo=habitacion.tipo, 
-                                                camas=habitacion.camas, 
-                                                precio=habitacion.precio, 
-                                                entrada=entrada, 
-                                                salida=salida) }}" 
+                                        {% set reserva_url = url_for('main.mostrar_reservas', id_habitacion=habitacion.id, tipo=habitacion.tipo, camas=habitacion.camas, precio=habitacion.precio, entrada=entrada, salida=salida) %}
+                                        <a href="javascript:void(0)" 
+                                           onclick="validarFechasYReservar('{{ reserva_url }}')"
                                            class="btn-reservar">Reservar Ahora</a>
                                     {% endif %}
                                 </div>
