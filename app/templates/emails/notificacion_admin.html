@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .header {
+            background-color: #3498db;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            padding: 20px;
+        }
+        .footer {
+            font-size: 12px;
+            color: #777;
+            text-align: center;
+            padding: 10px;
+            border-top: 1px solid #eee;
+        }
+        .reservation-details {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .customer-info {
+            background-color: #f0f0f0;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Nueva Reserva</h1>
+        <p>Reserva #{{ numero_reserva }}</p>
+    </div>
+    
+    <div class="content">
+        <p>Se ha registrado una nueva reserva en el sistema:</p>
+        
+        <div class="customer-info">
+            <h3>Información del cliente</h3>
+            <p><strong>Nombre:</strong> {{ nombre }}</p>
+            <p><strong>Email:</strong> {{ email }}</p>
+            <p><strong>Teléfono:</strong> {{ telefono }}</p>
+            <p><strong>Documento:</strong> {{ documento }}</p>
+        </div>
+        
+        <div class="reservation-details">
+            <h3>Detalles de la reserva</h3>
+            <table>
+                <tr>
+                    <th>Concepto</th>
+                    <th>Detalle</th>
+                </tr>
+                <tr>
+                    <td>ID Habitación</td>
+                    <td>{{ id_habitacion }}</td>
+                </tr>
+                <tr>
+                    <td>Entrada</td>
+                    <td>{{ entrada }}</td>
+                </tr>
+                <tr>
+                    <td>Salida</td>
+                    <td>{{ salida }}</td>
+                </tr>
+                <tr>
+                    <td>Huéspedes</td>
+                    <td>{{ huespedes }}</td>
+                </tr>
+                <tr>
+                    <td>Precio total</td>
+                    <td>${{ precio_total }}</td>
+                </tr>
+                <tr>
+                    <td>Método de pago</td>
+                    <td>{{ metodo_pago }}</td>
+                </tr>
+            </table>
+            
+            {% if comentarios %}
+            <h4>Comentarios:</h4>
+            <p>{{ comentarios }}</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>© 2025 Sistema de Administración Bio Palma Hotel</p>
+    </div>
+</body>
+</html>

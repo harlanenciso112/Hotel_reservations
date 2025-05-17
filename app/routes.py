@@ -4,6 +4,7 @@ from .db import obtener_conexion
 import random
 import string
 import os
+from .emails import send_reservation_confirmation  # Importa la función
 
 
 main = Blueprint('main', __name__)
@@ -133,6 +134,7 @@ def procesar_reserva():
         numero_reserva = "BIO" + ''.join(random.choices(string.digits, k=6))
         
         # Guardar la reserva en la base de datos
+        conn = None
         try:
             conn = obtener_conexion()
             cursor = conn.cursor()
@@ -145,6 +147,13 @@ def procesar_reserva():
              documento, num_huespedes, comentarios, fecha_reserva, estado)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), 'confirmada')
             """
+            
+            # Convertir valores si es necesario
+            try:
+                precio_total = float(precio_total)
+                huespedes = int(huespedes)
+            except ValueError:
+                raise ValueError("El precio total o número de huéspedes no es válido")
             
             cursor.execute(query, (
                 numero_reserva,
@@ -162,11 +171,7 @@ def procesar_reserva():
                 comentarios
             ))
             
-            # Actualizar la disponibilidad de la habitación si es necesario
-            # Si quieres mantener la habitación como disponible para más reservas
-            # en otras fechas, necesitarías una lógica más compleja.
-            # De lo contrario, puedes marcarla como no disponible:
-            
+            # Actualizar la disponibilidad de la habitación
             query_update = """
             UPDATE habitaciones 
             SET disponibilidad = False 
@@ -180,6 +185,29 @@ def procesar_reserva():
             # Cerrar conexión
             cursor.close()
             conn.close()
+            
+            # Preparar datos para el correo
+            reservation_data = {
+                'numero_reserva': numero_reserva,
+                'nombre': nombre,
+                'email': email,
+                'telefono': telefono,
+                'documento': documento,
+                'entrada': entrada,
+                'salida': salida,
+                'id_habitacion': id_habitacion,
+                'huespedes': huespedes,
+                'precio_total': precio_total,
+                'metodo_pago': info_pago,
+                'comentarios': comentarios
+            }
+            
+            # Enviar correos de confirmación
+            try:
+                send_reservation_confirmation(reservation_data)
+            except Exception as mail_error:
+                print(f"Error al enviar correos: {mail_error}")
+                # Continuar aunque falle el envío de correos
             
             return render_template('confirmacion.html', 
                                   numero_reserva=numero_reserva,

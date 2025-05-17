@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .header {
+            background-color: #3498db;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .footer {
+            font-size: 12px;
+            color: #777;
+            text-align: center;
+            padding: 10px;
+            border-top: 1px solid #eee;
+        }
+        .reservation-details {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .reservation-number {
+            font-size: 24px;
+            color: #27ae60;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .detail-row {
+            margin-bottom: 10px;
+        }
+        .detail-label {
+            font-weight: bold;
+            display: inline-block;
+            width: 140px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Bio Palma Hotel</h1>
+        <p>¡Tu reserva ha sido confirmada!</p>
+    </div>
+    
+    <div class="content">
+        <p>Hola <strong>{{ nombre }}</strong>,</p>
+        
+        <p>Gracias por elegir Bio Palma Hotel para tu estadía. Tu reserva ha sido confirmada y procesada exitosamente.</p>
+        
+        <div class="reservation-details">
+            <div class="reservation-number">Reserva #{{ numero_reserva }}</div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Fecha de entrada:</span> {{ entrada }}
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Fecha de salida:</span> {{ salida }}
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Método de pago:</span> {{ metodo_pago }}
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Total pagado:</span> ${{ precio_total }}
+            </div>
+        </div>
+        
+        <p>Si tienes alguna pregunta sobre tu reserva, no dudes en contactarnos respondiendo a este correo o llamando al (123) 456-7890.</p>
+        
+        <p>¡Esperamos darte la bienvenida pronto!</p>
+        
+        <p>Atentamente,<br>
+        El equipo de Bio Palma Hotel</p>
+    </div>
+    
+    <div class="footer">
+        <p>© 2025 Bio Palma Hotel. Todos los derechos reservados.</p>
+        <p>Este es un correo automático, por favor no responder.</p>
+    </div>
+</body>
+</html>
