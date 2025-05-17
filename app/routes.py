@@ -1,9 +1,13 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, url_for
 from datetime import datetime
 from .db import obtener_conexion
+import random
+import string
+import os
+
 
 main = Blueprint('main', __name__)
-
+MERCADOPAGO_PUBLIC_KEY = os.getenv("MERCADOPAGO_PUBLIC_KEY")
 @main.route('/')
 def home():
     return render_template('index.html')
@@ -85,77 +89,115 @@ def mostrar_reservas():
                           precio=precio,
                           entrada=entrada, 
                           salida=salida,
-                          dias=dias)
+                          dias=dias,
+                          mp_public_key=MERCADOPAGO_PUBLIC_KEY)
 
 @main.route('/procesar_reserva', methods=['POST'])
 def procesar_reserva():
     if request.method == 'POST':
-        # Obtener los datos del formulario
+        # Obtener datos del formulario
         id_habitacion = request.form.get('id_habitacion')
         entrada = request.form.get('entrada')
         salida = request.form.get('salida')
         precio_total = request.form.get('precio_total')
-        
-        # Datos del cliente
         nombre = request.form.get('nombre')
         email = request.form.get('email')
         telefono = request.form.get('telefono')
-        documento = request.form.get('documento')
-        huespedes = request.form.get('huespedes')
+        documento = request.form.get('documento', '')
+        huespedes = request.form.get('huespedes', '1')
         comentarios = request.form.get('comentarios', '')
-        metodo_pago = request.form.get('metodo_pago')
         
+        # Información de pago
+        payment_id = request.form.get('payment_id', '')
+        metodo_pago = request.form.get('metodo_pago', 'No especificado')
+        
+        # Formatear el método de pago para mostrar
+        metodo_formateado = "Mercado Pago"
+        if metodo_pago != 'mercadopago':
+            if metodo_pago == 'credit_card':
+                metodo_formateado = "Tarjeta de crédito"
+            elif metodo_pago == 'debit_card':
+                metodo_formateado = "Tarjeta de débito"
+            elif metodo_pago == 'bank_transfer':
+                metodo_formateado = "Transferencia bancaria"
+            elif metodo_pago == 'ticket':
+                metodo_formateado = "Pago en efectivo"
+            elif metodo_pago == 'wallet_purchase':
+                metodo_formateado = "Billetera Mercado Pago"
+            else:
+                metodo_formateado = metodo_pago
+        
+        info_pago = f"{metodo_formateado} - ID: {payment_id}"
+        
+        # Generar número de reserva
+        numero_reserva = "BIO" + ''.join(random.choices(string.digits, k=6))
+        
+        # Guardar la reserva en la base de datos
         try:
             conn = obtener_conexion()
             cursor = conn.cursor()
             
-            # 1. Guardar datos del cliente (si no existe)
-            cursor.execute(
-                "INSERT INTO clientes (nombre, email, telefono, documento) VALUES (%s, %s, %s, %s) ON DUPLICATE KEY UPDATE nombre=%s",
-                (nombre, email, telefono, documento, nombre)
-            )
+            # Insertar la reserva en la tabla reservas
+            query = """
+            INSERT INTO reservas 
+            (numero_reserva, id_habitacion, nombre_cliente, email, telefono, 
+             fecha_entrada, fecha_salida, precio_total, metodo_pago, payment_id, 
+             documento, num_huespedes, comentarios, fecha_reserva, estado)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), 'confirmada')
+            """
             
-            # Obtener el ID del cliente (ya sea el recién insertado o el existente)
-            cursor.execute("SELECT id FROM clientes WHERE documento = %s", (documento,))
-            resultado = cursor.fetchone()
-            cliente_id = resultado['id']  # Accede al valor por nombre de columna
+            cursor.execute(query, (
+                numero_reserva,
+                id_habitacion,
+                nombre,
+                email,
+                telefono,
+                entrada,
+                salida,
+                precio_total,
+                metodo_formateado,
+                payment_id,
+                documento,
+                huespedes,
+                comentarios
+            ))
             
-            # 2. Crear la reserva
-            fecha_reserva = datetime.now().strftime('%Y-%m-%d')
-            cursor.execute(
-                """INSERT INTO reservas 
-                (cliente_id, habitacion_id, fecha_reserva, fecha_entrada, fecha_salida, 
-                num_huespedes, precio_total, metodo_pago, comentarios, estado)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'confirmada')""",
-                (cliente_id, id_habitacion, fecha_reserva, entrada, 
-                 salida, huespedes, precio_total, metodo_pago, comentarios)
-            )
+            # Actualizar la disponibilidad de la habitación si es necesario
+            # Si quieres mantener la habitación como disponible para más reservas
+            # en otras fechas, necesitarías una lógica más compleja.
+            # De lo contrario, puedes marcarla como no disponible:
             
-            # Obtener el ID de la reserva recién creada
-            reserva_id = cursor.lastrowid
+            query_update = """
+            UPDATE habitaciones 
+            SET disponibilidad = False 
+            WHERE id = %s
+            """
+            cursor.execute(query_update, (id_habitacion,))
             
-            # 3. Actualizar estado de la habitación a ocupada
-            cursor.execute(
-                "UPDATE habitaciones SET disponibilidad = FALSE WHERE id = %s",
-                (id_habitacion,)
-            )
-            
-            # Confirmar los cambios en la base de datos
+            # Confirmar los cambios
             conn.commit()
             
-            # Redirigir a una página de confirmación
-            return render_template('confirmacion.html', 
-                                  reserva_id=reserva_id,
-                                  nombre=nombre,
-                                  entrada=entrada,
-                                  salida=salida)
-            
-        except Exception as e:
-            # Si hay un error, hacer rollback y mostrar error
-            conn.rollback()
-            return render_template('error.html', error=str(e))
-        
-        finally:
             # Cerrar conexión
             cursor.close()
             conn.close()
+            
+            return render_template('confirmacion.html', 
+                                  numero_reserva=numero_reserva,
+                                  nombre=nombre,
+                                  email=email,
+                                  entrada=entrada,
+                                  salida=salida,
+                                  metodo_pago=info_pago,
+                                  precio_total=precio_total)
+                                  
+        except Exception as e:
+            # En caso de error, hacer rollback y mostrar página de error
+            if conn:
+                conn.rollback()
+                cursor.close()
+                conn.close()
+            
+            print(f"Error al guardar la reserva: {e}")
+            return render_template('error.html', 
+                                  mensaje=f"Error al procesar la reserva: {str(e)}",
+                                  volver_url=request.referrer or url_for('main.home'))

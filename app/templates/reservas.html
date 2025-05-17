@@ -18,6 +18,7 @@
             border-color: #e74c3c;
         }
     </style>
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
 </head>
 <body>
     <!-- Encabezado -->
@@ -111,36 +112,9 @@
                 
                 <div class="pago-seccion">
                     <h3>Método de pago</h3>
-                    <div class="metodos-pago">
-                        <div class="metodo">
-                            <input type="radio" id="tarjeta" name="metodo_pago" value="tarjeta" checked>
-                            <label for="tarjeta">Tarjeta de crédito/débito</label>
-                        </div>
-                        
-                        <div class="metodo">
-                            <input type="radio" id="paypal" name="metodo_pago" value="paypal">
-                            <label for="paypal">PayPal</label>
-                        </div>
-                    </div>
                     
-                    <div class="tarjeta-detalles" id="tarjeta-detalles">
-                        <div class="form-group">
-                            <label for="numero_tarjeta">Número de tarjeta</label>
-                            <input type="text" id="numero_tarjeta" name="numero_tarjeta" pattern="[0-9]{16}" placeholder="1234 5678 9012 3456">
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group medio">
-                                <label for="fecha_exp">Fecha de expiración</label>
-                                <input type="text" id="fecha_exp" name="fecha_exp" placeholder="MM/AA">
-                            </div>
-                            
-                            <div class="form-group medio">
-                                <label for="cvv">CVV</label>
-                                <input type="text" id="cvv" name="cvv" pattern="[0-9]{3,4}" placeholder="123">
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Contenedor para Mercado Pago Payment Brick -->
+                    <div id="paymentBrick_container"></div>
                 </div>
                 
                 <div class="terminos-group">
@@ -148,7 +122,8 @@
                     <label for="terminos">Acepto los términos y condiciones del hotel</label>
                 </div>
                 
-                <button type="submit" class="btn-pagar">Confirmar y Pagar</button>
+                <!-- Oculto el botón original ya que el Payment Brick tiene su propio botón -->
+                <button type="button" id="btn-continuar" class="btn-pagar" style="display: none;">Continuar</button>
             </form>
         </div>
     </main>
@@ -162,16 +137,27 @@
         document.querySelectorAll('input[name="metodo_pago"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 const tarjetaDetalles = document.getElementById('tarjeta-detalles');
+                const mpContainer = document.getElementById('mercadopago-bricks-container');
+                
                 if (this.value === 'tarjeta') {
                     tarjetaDetalles.style.display = 'block';
+                    mpContainer.style.display = 'none';
+                } else if (this.value === 'mercadopago') {
+                    tarjetaDetalles.style.display = 'none';
+                    mpContainer.style.display = 'block';
                 } else {
                     tarjetaDetalles.style.display = 'none';
+                    mpContainer.style.display = 'none';
                 }
             });
         });
 
         // Validación de formulario mejorada
         document.getElementById('reserva-form').addEventListener('submit', function(event) {
+            // Evitamos que el formulario se envíe automáticamente
+            // El envío será controlado por el Payment Brick
+            event.preventDefault();
+            
             let isValid = true;
             
             // Validar email
@@ -200,9 +186,146 @@
                 telefonoError.style.display = "none";
             }
             
-            // Si hay errores, prevenir el envío del formulario
+            // Si hay errores, no continuamos
             if (!isValid) {
-                event.preventDefault();
+                return false;
+            }
+        });
+
+        // Integración de Mercado Pago Payment Brick
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Inicializa el objeto SDK de Mercado Pago
+            const mp = new MercadoPago('{{ mp_public_key }}', {
+                locale: 'es-AR'
+            });
+
+            // Obtiene el precio total desde el input oculto
+            const precioTotal = document.querySelector('input[name="precio_total"]').value;
+            
+            // Obtiene datos del formulario
+            const nombreInput = document.getElementById('nombre');
+            const emailInput = document.getElementById('email');
+            
+            try {
+                const bricksBuilder = mp.bricks();
+                
+                // Renderiza el componente Payment Brick
+                const renderPaymentBrick = async () => {
+                    const settings = {
+                        initialization: {
+                            // Monto total a pagar
+                            amount: parseFloat(precioTotal),
+                            // En un entorno real, este ID vendría del backend
+                            // Para sandbox, usamos un simulador
+                            payer: {
+                                firstName: nombreInput.value || "",
+                                lastName: "",
+                                email: emailInput.value || "",
+                            },
+                        },
+                        customization: {
+                            visual: {
+                                style: {
+                                    theme: "default", // flat, dark, bootstrap
+                                },
+                                hideFormTitle: true,
+                                hidePaymentButton: false,
+                            },
+                            paymentMethods: {
+                                // Habilitamos todos los métodos de pago disponibles
+                                creditCard: "all",
+                                debitCard: "all",
+                                ticket: "all",
+                                bankTransfer: "all",
+                                atm: "all",
+                                wallet_purchase: "all",
+                                maxInstallments: 1
+                            },
+                        },
+                        callbacks: {
+                            onReady: () => {
+                                console.log('Payment Brick listo');
+                                
+                                // Actualizar datos del pagador cuando cambian los inputs
+                                nombreInput.addEventListener('change', updatePayerData);
+                                emailInput.addEventListener('change', updatePayerData);
+                                
+                                function updatePayerData() {
+                                    window.paymentBrickController.update({
+                                        payer: {
+                                            firstName: nombreInput.value || "",
+                                            lastName: "",
+                                            email: emailInput.value || "",
+                                        }
+                                    });
+                                }
+                            },
+                            onSubmit: (formData) => {
+                                // Este callback se ejecuta cuando el usuario hace clic en pagar
+                                console.log("Método seleccionado:", formData.paymentMethod);
+                                console.log("Datos del formulario:", formData);
+                                
+                                return new Promise((resolve, reject) => {
+                                    // En un entorno real, aquí enviarías los datos al backend
+                                    // Como estamos en sandbox, simulamos una respuesta exitosa
+                                    
+                                    // Verificamos que el formulario esté válido
+                                    const form = document.getElementById('reserva-form');
+                                    const isValid = form.checkValidity();
+                                    
+                                    if (!isValid) {
+                                        form.reportValidity();
+                                        reject(new Error('Formulario inválido'));
+                                        return;
+                                    }
+                                    
+                                    // Simula procesamiento
+                                    console.log("Procesando pago...");
+                                    
+                                    setTimeout(() => {
+                                        try {
+                                            // Añadir ID de pago y método al formulario
+                                            const paymentIdInput = document.createElement('input');
+                                            paymentIdInput.type = 'hidden';
+                                            paymentIdInput.name = 'payment_id';
+                                            paymentIdInput.value = 'SANDBOX-' + Math.random().toString(36).substr(2, 9);
+                                            form.appendChild(paymentIdInput);
+                                            
+                                            const paymentMethodInput = document.createElement('input');
+                                            paymentMethodInput.type = 'hidden';
+                                            paymentMethodInput.name = 'metodo_pago';
+                                            paymentMethodInput.value = formData.paymentMethod || 'mercadopago';
+                                            form.appendChild(paymentMethodInput);
+                                            
+                                            // Envía el formulario principal
+                                            form.submit();
+                                            resolve();
+                                        } catch (error) {
+                                            console.error("Error al procesar:", error);
+                                            reject(error);
+                                        }
+                                    }, 2000);
+                                });
+                            },
+                            onError: (error) => {
+                                // Callback llamado para todos los casos de error
+                                console.error('Error en Payment Brick:', error);
+                            },
+                        },
+                    };
+                    
+                    // Crear el brick y guardar el controlador en una variable global
+                    window.paymentBrickController = await bricksBuilder.create(
+                        "payment",
+                        "paymentBrick_container",
+                        settings
+                    );
+                };
+                
+                renderPaymentBrick();
+                
+            } catch (error) {
+                console.error('Error al inicializar Mercado Pago:', error);
             }
         });
     </script>
