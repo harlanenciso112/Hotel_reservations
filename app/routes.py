@@ -229,3 +229,142 @@ def procesar_reserva():
             return render_template('error.html', 
                                   mensaje=f"Error al procesar la reserva: {str(e)}",
                                   volver_url=request.referrer or url_for('main.home'))
+        
+
+@main.route('/cancelar-reserva')
+def cancelar_reserva():
+    """Muestra la página para buscar y cancelar una reserva"""
+    return render_template('cancelar_reserva.html')
+
+@main.route('/buscar-reserva')
+def buscar_reserva():
+    """Busca una reserva por su número y muestra los detalles"""
+    numero_reserva = request.args.get('numero_reserva', '')
+    
+    if not numero_reserva:
+        return render_template('cancelar_reserva.html', 
+                              mensaje="Por favor, ingresa un número de reserva",
+                              clase_mensaje="error",
+                              busqueda_realizada=False)
+    
+    try:
+        conn = obtener_conexion()
+        cursor = conn.cursor()
+        
+        # Buscar la reserva
+        query = """
+        SELECT r.*, h.tipo 
+        FROM reservas r
+        JOIN habitaciones h ON r.id_habitacion = h.id
+        WHERE r.numero_reserva = %s
+        """
+        cursor.execute(query, (numero_reserva,))
+        reserva = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        if reserva:
+            return render_template('cancelar_reserva.html', 
+                                  reserva=reserva,
+                                  tipo_habitacion=reserva['tipo'],
+                                  busqueda_realizada=True)
+        else:
+            return render_template('cancelar_reserva.html', 
+                                  mensaje="No se encontró ninguna reserva con ese número",
+                                  clase_mensaje="error",
+                                  busqueda_realizada=True)
+    
+    except Exception as e:
+        print(f"Error al buscar reserva: {e}")
+        return render_template('cancelar_reserva.html', 
+                              mensaje=f"Error al buscar la reserva: {str(e)}",
+                              clase_mensaje="error",
+                              busqueda_realizada=False)
+
+@main.route('/procesar-cancelacion', methods=['POST'])
+def procesar_cancelacion():
+    """Procesa la cancelación de una reserva"""
+    id_reserva = request.form.get('id_reserva')
+    
+    if not id_reserva:
+        return render_template('cancelar_reserva.html', 
+                              mensaje="ID de reserva no proporcionado",
+                              clase_mensaje="error")
+    
+    conn = None
+    try:
+        conn = obtener_conexion()
+        cursor = cursor = conn.cursor()
+        
+        # Obtener datos de la reserva
+        query = "SELECT * FROM reservas WHERE id = %s"
+        cursor.execute(query, (id_reserva,))
+        reserva = cursor.fetchone()
+        
+        if not reserva:
+            raise ValueError("Reserva no encontrada")
+        
+        # Verificar si ya está cancelada
+        if reserva['estado'] == 'cancelada':
+            return render_template('cancelar_reserva.html', 
+                                  mensaje="Esta reserva ya ha sido cancelada",
+                                  clase_mensaje="error")
+        
+        # Actualizar estado de la reserva
+        query_update_reserva = """
+        UPDATE reservas 
+        SET estado = 'cancelada' 
+        WHERE id = %s
+        """
+        cursor.execute(query_update_reserva, (id_reserva,))
+        
+        # Actualizar disponibilidad de la habitación
+        query_update_habitacion = """
+        UPDATE habitaciones 
+        SET disponibilidad = True 
+        WHERE id = %s
+        """
+        cursor.execute(query_update_habitacion, (reserva['id_habitacion'],))
+        
+        # Confirmar cambios
+        conn.commit()
+        
+        # Obtener datos para mostrar
+        query = """
+        SELECT r.*, h.tipo 
+        FROM reservas r
+        JOIN habitaciones h ON r.id_habitacion = h.id
+        WHERE r.id = %s
+        """
+        cursor.execute(query, (id_reserva,))
+        reserva_actualizada = cursor.fetchone()
+        
+        cursor.close()
+        conn.close()
+        
+        # Enviar correo de confirmación de cancelación (opcional)
+        try:
+            # Aquí podrías implementar el envío de correo de cancelación
+            pass
+        except Exception as mail_error:
+            print(f"Error al enviar correo de cancelación: {mail_error}")
+        
+        return render_template('cancelar_reserva.html', 
+                              mensaje="Reserva cancelada exitosamente.",
+                              clase_mensaje="success",
+                              reserva=reserva_actualizada,
+                              tipo_habitacion=reserva_actualizada['tipo'],
+                              busqueda_realizada=True)
+    
+    except Exception as e:
+        # En caso de error, hacer rollback
+        if conn:
+            conn.rollback()
+            cursor.close()
+            conn.close()
+        
+        print(f"Error al cancelar reserva: {e}")
+        return render_template('cancelar_reserva.html', 
+                              mensaje=f"Error al cancelar la reserva: {str(e)}",
+                              clase_mensaje="error")
